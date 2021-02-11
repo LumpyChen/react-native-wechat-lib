@@ -43,8 +43,6 @@ import com.tencent.mm.opensdk.modelmsg.WXMusicObject;
 import com.tencent.mm.opensdk.modelmsg.WXTextObject;
 import com.tencent.mm.opensdk.modelmsg.WXVideoObject;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
-import com.tencent.mm.opensdk.modelpay.PayReq;
-import com.tencent.mm.opensdk.modelpay.PayResp;
 import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
@@ -644,34 +642,6 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         _share(SendMessageToWX.Req.WXSceneFavorite, data, callback);
     }
 
-    @ReactMethod
-    public void pay(ReadableMap data, Callback callback) {
-        PayReq payReq = new PayReq();
-        if (data.hasKey("partnerId")) {
-            payReq.partnerId = data.getString("partnerId");
-        }
-        if (data.hasKey("prepayId")) {
-            payReq.prepayId = data.getString("prepayId");
-        }
-        if (data.hasKey("nonceStr")) {
-            payReq.nonceStr = data.getString("nonceStr");
-        }
-        if (data.hasKey("timeStamp")) {
-            payReq.timeStamp = data.getString("timeStamp");
-        }
-        if (data.hasKey("sign")) {
-            payReq.sign = data.getString("sign");
-        }
-        if (data.hasKey("package")) {
-            payReq.packageValue = data.getString("package");
-        }
-        if (data.hasKey("extData")) {
-            payReq.extData = data.getString("extData");
-        }
-        payReq.appId = appId;
-        callback.invoke(api.sendReq(payReq) ? null : INVOKE_FAILED);
-    }
-
     private void _share(final int scene, final ReadableMap data, final Callback callback) {
         Uri uri = null;
         if (data.hasKey("thumbImage")) {
@@ -973,10 +943,6 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         } else if (baseResp instanceof SendMessageToWX.Resp) {
             SendMessageToWX.Resp resp = (SendMessageToWX.Resp) (baseResp);
             map.putString("type", "SendMessageToWX.Resp");
-        } else if (baseResp instanceof PayResp) {
-            PayResp resp = (PayResp) (baseResp);
-            map.putString("type", "PayReq.Resp");
-            map.putString("returnKey", resp.returnKey);
         } else if (baseResp.getType() == ConstantsAPI.COMMAND_LAUNCH_WX_MINIPROGRAM) {
             WXLaunchMiniProgram.Resp resp = (WXLaunchMiniProgram.Resp) baseResp;
             // 对应JsApi navigateBackApplication中的extraData字段数据
